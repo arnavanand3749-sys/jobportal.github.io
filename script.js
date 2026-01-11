@@ -95,8 +95,8 @@
             { role: "Librarian", company: "CityLib", loc: "Delhi", type: "Full Time", icon: "fa-book", cat: "Education", desc: "Manage book collections and assist readers." },
             { role: "Research Assistant", company: "UniTech", loc: "Chennai", type: "Internship", icon: "fa-vial", cat: "Education", desc: "Assist professors with academic papers." },
             { role: "Principal", company: "AcademyHigh", loc: "Mumbai", type: "Full Time", icon: "fa-user-tie", cat: "Education", desc: "Oversee school operations and staff." },
-
-             // --- HEALTHCARE (81-90) ---
+        
+            // --- HEALTHCARE (81-90) ---
             { role: "General Physician", company: "CityClinic", loc: "Mumbai", type: "Full Time", icon: "fa-user-doctor", cat: "Healthcare", desc: "Diagnose and treat common medical conditions." },
             { role: "Registered Nurse", company: "HopeHospital", loc: "Delhi", type: "Full Time", icon: "fa-staff-snake", cat: "Healthcare", desc: "Provide patient care and support doctors." },
             { role: "Pharmacist", company: "MediStore", loc: "Bangalore", type: "Full Time", icon: "fa-pills", cat: "Healthcare", desc: "Dispense medications and advise on usage." },
@@ -282,8 +282,8 @@
             refreshApplied();
             loadJobs();
         };
-      
-         // --- SAVE LOGIC ---
+
+        // --- SAVE LOGIC ---
         window.toggleBookmark = function(role, company) {
             const idx = saved_list.findIndex(s => s.role === role && s.company === company);
             if(idx > -1) saved_list.splice(idx, 1);
