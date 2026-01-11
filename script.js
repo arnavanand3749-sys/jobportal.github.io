@@ -282,3 +282,99 @@
             refreshApplied();
             loadJobs();
         };
+      
+         // --- SAVE LOGIC ---
+        window.toggleBookmark = function(role, company) {
+            const idx = saved_list.findIndex(s => s.role === role && s.company === company);
+            if(idx > -1) saved_list.splice(idx, 1);
+            else saved_list.push(all_jobs.find(j => j.role === role && j.company === company));
+            refreshSaved();
+            loadJobs();
+        };
+
+        function refreshSaved() {
+    document.getElementById("count_saved").innerText = saved_list.length;
+    const list = document.getElementById("list_saved");
+    
+    if(saved_list.length === 0) {
+        list.innerHTML = `<p class="text-muted text-center mt-4">No jobs saved yet.</p>`;
+    } else {
+        list.innerHTML = saved_list.map(job => {
+            const isApplied = applied_list.some(a => a.role === job.role && a.company === job.company);
+            
+            return `
+                <div class="card p-3 mb-2 border-0 shadow-sm saved_card_item" style="cursor:pointer;" onclick="handleSavedAction('details', '${job.role}', '${job.company}')">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="logo_square me-3" style="width:40px; height:40px; font-size:1rem;">
+                            <i class="fas ${job.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 fw-bold">${job.role}</h6>
+                            <p class="small text-muted mb-0">${job.company}</p>
+                        </div>
+                        <button class="btn btn-sm text-danger ms-2" onclick="event.stopPropagation(); toggleBookmark('${job.role}', '${job.company}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2">
+                        ${isApplied 
+                            ? `<button class="btn btn-sm btn-success w-100" disabled><i class="fas fa-check me-1"></i> Applied</button>`
+                            : `<button class="btn btn-sm btn-primary w-100" onclick="event.stopPropagation(); handleSavedAction('apply', '${job.role}', '${job.company}')">Apply Now</button>`
+                        }
+                    </div>
+                </div>`;
+        }).join('');
+    }
+}
+
+// Helper function to close the drawer before opening a modal
+window.handleSavedAction = function(type, role, company) {
+    // 1. Close the Offcanvas drawer first
+    const drawerElement = document.getElementById('drawer_saved');
+    const drawerInstance = bootstrap.Offcanvas.getInstance(drawerElement);
+    if (drawerInstance) drawerInstance.hide();
+
+    // 2. Wait a split second for the drawer to clear, then open the modal
+    setTimeout(() => {
+        if (type === 'apply') {
+            showApplyModal(role, company);
+        } else {
+            showJobDetails(role, company);
+        }
+    }, 350); 
+};
+        // --- DETAILS POPUP ---
+        window.showJobDetails = function(role, company) {
+            const job = all_jobs.find(j => j.role === role && j.company === company);
+            if(!job) return;
+
+            document.getElementById("view_role").innerText = job.role;
+            document.getElementById("view_company").innerText = job.company;
+            document.getElementById("view_type").innerText = job.type;
+            document.getElementById("view_loc").innerText = job.loc;
+            document.getElementById("view_icon").innerHTML = `<i class="fas ${job.icon}"></i>`;
+            document.getElementById("view_desc").innerText = job.desc || "Detailed description not available.";
+            
+            const isApplied = applied_list.some(a => a.role === job.role && a.company === job.company);
+            const detailBtn = document.getElementById("btn_apply_from_details");
+            
+            if(isApplied) {
+                detailBtn.innerText = "Already Applied";
+                detailBtn.classList.remove("btn_custom");
+                detailBtn.classList.add("btn-success");
+                detailBtn.disabled = true;
+            } else {
+                detailBtn.innerText = "Apply for this Position";
+                detailBtn.classList.add("btn_custom");
+                detailBtn.classList.remove("btn-success");
+                detailBtn.disabled = false;
+                detailBtn.onclick = function() {
+                    bootstrap.Modal.getInstance(document.getElementById('popup_details')).hide();
+                    setTimeout(() => showApplyModal(role, company), 300);
+                };
+            }
+            new bootstrap.Modal(document.getElementById('popup_details')).show();
+        };
+
+        // --- INIT ---
+        loadJobs();
