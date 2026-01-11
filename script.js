@@ -192,3 +192,93 @@
                                     <div class="logo_square"><i class="fas ${job.icon}"></i></div>
                                     <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2" style="height: fit-content;">${job.type}</span>
                                 </div>
+                                <h5 class="fw-bold mb-1">${job.role}</h5>
+                                <p class="text-muted small">${job.company} • ${job.cat}</p>
+                                <div class="mt-auto pt-3 d-flex gap-2">
+                                    <button class="btn btn-light flex-grow-1 border" onclick="showJobDetails('${job.role}', '${job.company}')">Details</button>
+                                    ${btnHtml}
+                                    <button class="bookmark_icon ${isSaved ? 'saved' : ''}" onclick="toggleBookmark('${job.role}', '${job.company}')">
+                                        <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+        }
+
+        // --- APPLY LOGIC ---
+        window.showApplyModal = function(role, company) {
+            temp_job = all_jobs.find(j => j.role === role && j.company === company);
+            document.getElementById("target_role_name").innerText = role + " at " + company;
+            document.getElementById("form_apply").style.display = "block";
+            document.getElementById("msg_success").style.display = "none";
+            document.getElementById("form_apply").reset();
+            new bootstrap.Modal(document.getElementById('popup_application')).show();
+        };
+
+        window.submitApp = function(e) {
+            e.preventDefault();
+            
+            const fileIn = document.getElementById('upload_cv');
+            let fName = "resume.pdf";
+            if (fileIn && fileIn.files.length > 0) {
+                fName = fileIn.files[0].name;
+            }
+
+            if(temp_job) {
+                applied_list.push({
+                    ...temp_job,
+                    appliedDate: new Date().toLocaleDateString(),
+                    resumeName: fName
+                });
+            }
+
+            refreshApplied();
+            loadJobs(); 
+
+            document.getElementById("form_apply").style.display = "none";
+            document.getElementById("msg_success").style.display = "block";
+            
+            setTimeout(() => {
+                const modalEl = document.getElementById('popup_application');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }, 1500);
+        };
+
+        function refreshApplied() {
+            document.getElementById("count_applied").innerText = applied_list.length;
+            const list = document.getElementById("list_applied");
+            
+            if(applied_list.length === 0) {
+                list.innerHTML = `<p class="text-muted text-center mt-4">No applications yet.</p>`;
+            } else {
+                list.innerHTML = applied_list.map(job => `
+                    <div class="card p-3 mb-2 border-0 shadow-sm">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="logo_square me-3" style="width:40px; height:40px; font-size:1rem;"><i class="fas ${job.icon}"></i></div>
+                            <div><h6 class="mb-0 fw-bold">${job.role}</h6><p class="small text-muted mb-0">${job.company}</p></div>
+                            
+                            <button class="btn btn-sm text-danger ms-auto" onclick="removeApp('${job.role}', '${job.company}')" title="Withdraw Application">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                            <span class="badge bg-success-subtle text-success">Pending</span>
+                            <small class="text-primary"><i class="fas fa-paperclip me-1"></i> ${job.resumeName}</small>
+                        </div>
+                    </div>`).join('');
+            }
+        }
+
+        window.removeApp = function(role, company) {
+            if(!confirm("Are you sure you want to withdraw your application for " + role + "?")) return;
+            
+            const idx = applied_list.findIndex(a => a.role === role && a.company === company);
+            if (idx > -1) {
+                applied_list.splice(idx, 1);
+            }
+            refreshApplied();
+            loadJobs();
+        };
