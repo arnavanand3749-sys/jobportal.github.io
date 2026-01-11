@@ -150,6 +150,56 @@
                             <input type="url" id="applicant_link" class="form-control" placeholder="https://linkedin.com/in/...">
                         </div>
                     </div>
+                                  <div class="mb-3">
+                        <label class="form-label small fw-bold">Brief Professional Summary</label>
+                        <textarea id="applicant_summary" class="form-control" rows="3" placeholder="Tell the recruiter about your key skills..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Upload Resume / CV</label>
+                        <input type="file" id="upload_cv" class="form-control" accept=".pdf,.doc,.docx" required>
+                    </div>
+
+                    <button type="submit" class="btn btn_custom w-100 py-3 fw-bold">Send Professional Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade" id="popup_details" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div id="view_icon" class="logo_square me-3" style="width: 64px; height: 64px; font-size: 1.8rem;"></div>
+                        <div>
+                            <h3 class="fw-bold mb-1" id="view_role"></h3>
+                            <p class="text-muted mb-0" id="view_company"></p>
+                        </div>
+                        <div class="ms-auto text-end">
+                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-2" id="view_type"></span>
+                            <div class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> <span id="view_loc"></span></div>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">About the Role</h5>
+                    <p class="text-muted mb-4" id="view_desc"></p>
+                    <h5 class="fw-bold mb-3">Requirements</h5>
+                    <ul class="text-muted mb-4 list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Bachelor's degree in related field</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 2+ years of experience</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Strong communication skills</li>
+                    </ul>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn_custom py-3" id="btn_apply_from_details">Apply for this Position</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
     </body>
     </html>
